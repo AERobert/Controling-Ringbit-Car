@@ -3,16 +3,19 @@ import radio
 from Joystickbit import *
 jsb = JOYSTICKBIT(pin0, pin1, pin2)
 jsb.last_message = '0,0'
+# dictionary containing instructions for what to do after pushing the first five buttons
 jsb.button_functions = {
 '1': '100,100',
 '2': '100,-100',
 '3': '-100,-100',
 '4': '-100,100',
 '5': '0,0'}
+# function to constrain a value within a range of avalues
 def constrain_value(value, min, max):
     if value > max: return max
     elif value < min: return min
     else: return value
+# a function to translate the position of the joystick into a readable speed instruction for the car
 def vector_to_speeds(distance_supplied, angle_supplied):
     distance = int(distance_supplied)
     angle = int(angle_supplied)
@@ -31,25 +34,23 @@ def vector_to_speeds(distance_supplied, angle_supplied):
     left = constrain_value(int(left), -100, 100)
     right = constrain_value(int(right), -100, 100)
     return str(left)+','+str(right)
-while True:
-    if not jsb.in_deadzone():
-        radio.on()
-        radio.send(vector_to_speeds(jsb.get_distance_from_center(), jsb.get_angle_of_joystick()))
-        radio.off()
-    else:
-        radio.on()
-        radio.send('0,0')
-        radio.off()
-    if jsb.button_pressed() != None:
-        buttonPressed = jsb.button_pressed()
-        if buttonPressed >= 1 and buttonPressed <= 5:
-            message = jsb.button_functions[str(buttonPressed)]
-            if buttonPressed < 5: jsb.last_message = message
-            radio.on()
-            radio.send(message)
-            radio.off()
-        elif buttonPressed == 6:
-            radio.on()
-            radio.send(jsb.last_message)
-            radio.off()
-            while jsb.is_pressed(buttonPressed): pass 
+while True: # main loop
+    if not jsb.in_deadzone(): # do not perform the following if the joystick is currently located within the centeral deadzone
+        radio.off() # Turn off the radio to save memory and power
+    else: # perform the following only if the joystick is in its deadzone
+        radio.on() # Turn on the radio to send messages
+        radio.send('0,0') # send a instruction to stop the car
+        radio.off() # turn off the radio to save power and memory
+    if jsb.button_pressed() != None: # continue only if a button is pressed
+        buttonPressed = jsb.button_pressed() # stores the current button in a variable
+        if buttonPressed >= 1 and buttonPressed <= 5: # continue if the pressed button is one of the first five
+            message = jsb.button_functions[str(buttonPressed)] # stores the speed instruction corosponding to the button pressed
+            if buttonPressed < 5: jsb.last_message = message # stores the current instruction if one of the first four buttons are pressed
+            radio.on() # turn on the radio to send messages
+            radio.send(message) # send the speed instruction stored previusly to the car
+            radio.off() # turrn off the radio to save memory and power
+        elif buttonPressed == 6: # do the following only if button 6 is pressed
+            radio.on() # turn on the radio to send messages
+            radio.send(jsb.last_message) # send the message from the last button pressed
+            radio.off() # turns off the radio to save power and memory
+            while jsb.is_pressed(buttonPressed): pass  # wait until the button is released
