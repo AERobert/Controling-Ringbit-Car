@@ -23,7 +23,7 @@ def vector_to_speeds(distance_supplied, angle_supplied):
         left = distance
         right = mapValue(angle, 0, 89, -distance, distance)
     if angle >= 90 and angle < 180:
-        left = mapValue(angle, 90, 179, -distance, distance)
+        left = mapValue(angle, 179, 90, -distance, distance)
         right = distance
     elif angle >= 180 and angle < 270:
         left = mapValue(angle, 279, 180, -distance, distance)
