@@ -36,10 +36,10 @@ class JOYSTICKBIT:
         return [self.get_analog_x(), self.get_analog_y()]
     # function to get the value of x as mapped on a circle.
     def get_x(self):
-        return mapValue(self.get_analog_x(), 0, 1023, self.mapped_diameter, (-1)*self.mapped_diameter)
+        return mapValue(self.get_analog_x(), 0, 1023, self.mapped_radius, (-1)*self.mapped_radius)
     # function to get the value of y as mapped on a circle.
     def get_y(self):
-        return mapValue(self.get_analog_y(), 0, 1023, self.mapped_diameter, (-1)*self.mapped_diameter)
+        return mapValue(self.get_analog_y(), 0, 1023, self.mapped_radius, (-1)*self.mapped_radius)
     # function to get a list containing the mapped values for x and y.
     def get_xy(self):
         return [self.get_x(),self.get_y()]
@@ -51,7 +51,7 @@ class JOYSTICKBIT:
         return get_angle_on_circle([0,0], self.get_xy())
     # function to determine if the joystick is currently positioned within its centeral deadzone
     def in_deadzone(self):
-        deadzone_radius= self.mapped_diameter*self.deadzone_ratio
+        deadzone_radius= self.mapped_radius*self.deadzone_ratio
         if self.get_distance_from_center() <= deadzone_radius: return True
         else: return False
     # returns the number of the button that is currently pressed or None if no button is pressed

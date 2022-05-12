@@ -36,13 +36,15 @@ def vector_to_speeds(distance_supplied, angle_supplied):
     return str(left)+','+str(right)
 while True: # main loop
     if not jsb.in_deadzone(): # do not perform the following if the joystick is currently located within the centeral deadzone
+        radio.on() # turn on the radio to send messages
+        radio.send(vector_to_speeds(jsb.get_distance_from_center(), jsb.get_angle_of_joystick()))
         radio.off() # Turn off the radio to save memory and power
     else: # perform the following only if the joystick is in its deadzone
         radio.on() # Turn on the radio to send messages
         radio.send('0,0') # send a instruction to stop the car
         radio.off() # turn off the radio to save power and memory
-    if jsb.button_pressed() != None: # continue only if a button is pressed
-        buttonPressed = jsb.button_pressed() # stores the current button in a variable
+    buttonPressed = jsb.button_pressed() # stores the current button in a variable
+    if buttonPressed != None: # continue only if a button is pressed
         if buttonPressed >= 1 and buttonPressed <= 5: # continue if the pressed button is one of the first five
             message = jsb.button_functions[str(buttonPressed)] # stores the speed instruction corosponding to the button pressed
             if buttonPressed < 5: jsb.last_message = message # stores the current instruction if one of the first four buttons are pressed
